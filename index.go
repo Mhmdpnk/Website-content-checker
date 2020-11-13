@@ -44,7 +44,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 	// Get the content of the URL and the return values
 	var html_version = getUrlContent(requested_url)
 	
-	
+
 	data := struct{
 		Email string
 		Url string
@@ -95,10 +95,14 @@ func getUrlContent(url string) float64{
 	var html_version float64 = getHtmlVersion(html_str)
 	
 
+	//---- Get HTML title --------
+	
 	return html_version
 }//getUrlContent
 
 
+
+// To get the HTML version
 func getHtmlVersion(html string) float64{
 	
 	var url_length int = len(html) // Find the length of HTML
@@ -115,13 +119,12 @@ func getHtmlVersion(html string) float64{
 			html_version = 1.1
 		} else if strings.Contains(html, "XHTML 4.01"){
 			html_version = 4.01
-		} else if strings.Contains(html, "doctype html"){
-			html_version = 5
 		} else {
-			html_version = 2
+			html_version = 5
 		}
 
 	}//for
 
 	return html_version
 }
+
