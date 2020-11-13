@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Results | Website Checker</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700%7CPoppins:400,500" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="/css/responsive.css">
+	
+</head>
+<body>
+	
+	<div class="main-area-wrapper" style="">
+		<div class="main-area-prc center-text" >
+
+			<div class="display-table">
+				<div class="display-table-cell">
+					<h1 class="title">Website Content Checker</h1>
+					<p class="desc">Here is the results for the requested URL: {{.Url}}</p>
+					<!-- <p>Your email address: {{.Email}}</p> -->
+
+					<div class="col-6 mx-auto mt-2">
+						<table class="table table-bordered">
+						<thead>
+					    	<tr>
+						      <th scope="col">Content</th>
+						      <th scope="col">Information</th>
+					    	</tr>
+					  	</thead>
+						<tbody>
+					    	<tr>
+					      		<th scope="row">HTML Version</th>
+					      		<td>{{.HtmlVersion}}</td>
+					    	</tr>
+					    	<tr>
+					    		<th scope="row">Page Title</th>
+					      		<td>N/A</td>
+					    	</tr>
+					    	<tr>
+					      		<th scope="row">Headings count by level</th>
+					      		<td>N/A</td>
+					    	</tr>
+					    	<tr>
+					      		<th scope="row">Amount of internal and external links</th>
+					      		<td>N/A</td>
+					    	</tr>
+					    	<tr>
+					      		<th scope="row">Amount of inaccessible links</th>
+					      		<td>N/A</td>
+					    	</tr>
+					    	<tr>
+					      		<th scope="row">If a page contains a login form</th>
+					      		<td>N/A</td>
+					    	</tr>
+					  	</tbody>
+					</table>	
+					</div>	
+					
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

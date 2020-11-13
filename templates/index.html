@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Golang | Website Checker</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700%7CPoppins:400,500" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="../css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../css/responsive.css">
+	
+</head>
+<body>
+	
+	<div class="main-area-wrapper" style="background-image:url(../images/bg-main.jpg);">
+		<div class="main-area center-text" >
+
+			<div class="display-table">
+				<div class="display-table-cell">
+					<h1 class="title">Website Content Checker</h1>
+					<p class="desc font-white">Insert the website address and check the content of the page</p>
+					
+					<form action="/process" method="POST" class="form-row justify-content-center mt-4">
+						<div class="row">
+							<div class="text-center col-7 mx-auto mt-2">
+								<input type="email" class="form-control" name="email" id="email" placeholder="Email address">
+							</div>
+
+							<div class="col-7 mx-auto mt-2">
+								<input type="text" class="form-control" name="web_url" id="web_url" placeholder="Website URL">
+							</div>
+
+							<div class="col-12 mt-3">
+								<input type="submit" class="btn btn-primary mb-2" value="Check URL">
+								<input type="reset" name="reset" class="btn btn-secondary mb-2" placeholder="Reset">
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
