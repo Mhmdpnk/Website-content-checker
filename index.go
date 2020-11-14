@@ -101,8 +101,6 @@ func getUrlContent(url string) (float64, string){
 	//---- Get HTML title --------
 	var title string = getHtmlTitle(html_str)
 
-    fmt.Println(title)
-
 
     //----------------------------
 	
@@ -176,3 +174,5 @@ func getHtmlTitle(HTMLString string) (title string) {
         }
     }
 }
+
+
