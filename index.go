@@ -6,6 +6,7 @@ import (
 		"html/template"
 		"io/ioutil"
 		"strings"
+		"golang.org/x/net/html"
 		)
 
 var tpl *template.Template
@@ -42,17 +43,19 @@ func processor(w http.ResponseWriter, r *http.Request){
 
 
 	// Get the content of the URL and the return values
-	var html_version = getUrlContent(requested_url)
+	var html_version, pageTitle = getUrlContent(requested_url)
 	
 
 	data := struct{
 		Email string
 		Url string
 		HtmlVersion float64
+		Title string
 	}{
 		Email: email,
 		Url: requested_url,
 		HtmlVersion: html_version,
+		Title: pageTitle,
 	}
 	
 	
@@ -60,7 +63,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 }
 
 
-func getUrlContent(url string) float64{
+func getUrlContent(url string) (float64, string){
 	
 	// Printing the HTML of URL
 	fmt.Printf("HTML code of %s ...\n", url)
@@ -96,8 +99,16 @@ func getUrlContent(url string) float64{
 	
 
 	//---- Get HTML title --------
+	var title string = getHtmlTitle(html_str)
+
+    fmt.Println(title)
+
+
+    //----------------------------
 	
-	return html_version
+	return html_version, title
+
+
 }//getUrlContent
 
 
@@ -128,3 +139,40 @@ func getHtmlVersion(html string) float64{
 	return html_version
 }
 
+// To get the HTML title
+func getHtmlTitle(HTMLString string) (title string) {
+
+    r := strings.NewReader(HTMLString)
+    z := html.NewTokenizer(r)
+
+    var i int
+    for {
+        tt := z.Next()
+
+        i++
+        if i > 100 { // Title should be one of the first tags
+            return
+        }
+
+        switch {
+        case tt == html.ErrorToken:
+            // End of the document, we're done
+            return
+        case tt == html.StartTagToken:
+            t := z.Token()
+
+            // Check if the token is an <title> tag
+            if t.Data != "title" {
+                continue
+            }
+
+            tt := z.Next()
+
+            if tt == html.TextToken {
+                t := z.Token()
+                title = t.Data
+                return
+            }
+        }
+    }
+}
