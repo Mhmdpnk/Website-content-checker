@@ -50,8 +50,6 @@ func processor(w http.ResponseWriter, r *http.Request){
 	}	
 
 	requested_url := r.FormValue("web_url")
-	email := r.FormValue("email")
-
 
 	// Get the content of the URL and the return values
 	var html_version, pageTitle = getUrlContent(requested_url)
@@ -59,17 +57,15 @@ func processor(w http.ResponseWriter, r *http.Request){
 
 	//---- Get External & Internal links
 	var internalLink, externalLink = linksCounter(requested_url)
-	//fmt.Println("Links: ", linkCount)
+	
 
 	data := struct{
-		Email string
 		Url string
 		HtmlVersion float64
 		Title string
 		Internal int
 		External int
 	}{
-		Email: email,
 		Url: requested_url,
 		HtmlVersion: html_version,
 		Title: pageTitle,
@@ -118,11 +114,11 @@ func getUrlContent(url string) (float64, string){
 	
 
 	//---- Get HTML title --------
-	var title string = getHtmlTitle(html_str)
+	var title string = getHtmlTagContent(html_str, "title")
 
 
-	//---- Get HTML headings --------
-
+	//---- Get Login Form --------
+	//getLoginForm(html_str)
 
 
     //----------------------------
@@ -137,31 +133,27 @@ func getUrlContent(url string) (float64, string){
 // To get the HTML version
 func getHtmlVersion(html string) float64{
 	
-	var url_length int = len(html) // Find the length of HTML
 	var html_version float64 = 0
-    
-	//fmt.Println(strings.Contains(html, "doctype")) 
 
-
-	for i := 0; i <= url_length; i++{
-
-		if strings.Contains(html, "XHTML 1.0"){
-			html_version = 1.0
-		} else if strings.Contains(html, "XHTML 1.1"){
-			html_version = 1.1
-		} else if strings.Contains(html, "XHTML 4.01"){
-			html_version = 4.01
-		} else {
-			html_version = 5
-		}
-
-	}//for
+	if strings.Contains(html, "XHTML 1.0"){
+		html_version = 1.0
+	} else if strings.Contains(html, "XHTML 1.1"){
+		html_version = 1.1
+	} else if strings.Contains(html, "HTML 2.0"){
+		html_version = 2.0
+	} else if strings.Contains(html, "HTML 3.2"){
+		html_version = 3.2
+	} else if strings.Contains(html, "XHTML 4.01"){
+		html_version = 4.01
+	} else {
+		html_version = 5
+	}
 
 	return html_version
 }
 
-// To get the HTML title
-func getHtmlTitle(HTMLString string) (title string) {
+// To get the HTML tag text content - Inside HTML tag
+func getHtmlTagContent(HTMLString string, HtmlTag string) (title string){
 
     r := strings.NewReader(HTMLString)
     z := html.NewTokenizer(r)
@@ -171,19 +163,18 @@ func getHtmlTitle(HTMLString string) (title string) {
         tt := z.Next()
 
         i++
-        if i > 100 { // Title should be one of the first tags
+        if i > 100 {
             return
         }
 
         switch {
         case tt == html.ErrorToken:
-            // End of the document, we're done
             return
         case tt == html.StartTagToken:
             t := z.Token()
 
-            // Check if the token is an <title> tag
-            if t.Data != "title" {
+            // Check the the HTML tag
+            if t.Data != HtmlTag {
                 continue
             }
 
@@ -257,4 +248,20 @@ func linksCounter(urlIn  string) (int, int){
 
 
 	return scrapeData.Internal, scrapeData.External
+}
+
+func getLoginForm(html string){
+
+	//var html_version float64 = 0
+    
+    if(strings.Contains(html, "login") || strings.Contains(html, "Login")){
+ 
+    	fmt.Println("It has login text.")
+
+    	if(strings.Contains(html, "form")){
+			fmt.Println("It has form!")
+		}
+
+    }
+	return
 }

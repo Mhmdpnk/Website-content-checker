@@ -1,98 +1,69 @@
 package main
 
 import (
-    /*"encoding/json"*/
     "fmt"
-    "log"
-    "net/http"
-    "net/url"
-    "os"
     "strings"
 
     "golang.org/x/net/html"
 )
 
-type scrapeDataStore struct {
-    Internal int `json:"internal"`
-    External int `json:"external"`
-}
-
-func isInternal(parsedLink *url.URL, siteURL *url.URL, link string) bool {
-    return parsedLink.Host == siteURL.Host || strings.Index(link, "#") == 0 || len(parsedLink.Host) == 0
-}
-
 func main() {
-    urlIn := os.Getenv("url")
-    if len(urlIn) == 0 {
-        urlIn = "https://www.alexellis.io/"
-        // log.Fatalln("Need a valid url as an env-var.")
-    }
 
-    siteURL, parseErr := url.Parse(urlIn)
+    HTMLString := `<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/QAPage">
 
-    if parseErr != nil {
-        log.Fatalln(parseErr)
-    }
+<head>
 
-    resp, err := http.Get(urlIn)
-    if err != nil {
-        log.Fatalln(err)
-    }
+<title>go - Golang parse HTML, extract all content with &lt;body&gt; &lt;/body&gt; tags - Stack Overflow</title>
+    <link rel="shortcut icon" href="//cdn.sstatic.net/Sites/stackoverflow/img/favicon.ico?v=4f32ecc8f43d">
+    <link rel="apple-touch-icon image_src" href="//cdn.sstatic.net/Sites/stackoverflow/img/apple-touch-icon.png?v=c78bd457575a">
+    <link rel="search" type="application/opensearchdescription+xml" title="Stack Overflow" href="/opensearch.xml">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:domain" content="stackoverflow.com"/>
+    <meta property="og:type" content="website" />
+    <body><input type="password" /><img src="#" /></body>`
 
-    scrapeData :=  scrapeDataStore{}
+    title := getTitle(HTMLString)
 
-    tokenizer := html.NewTokenizer(resp.Body)
-    end := false
+    fmt.Println(title)
+}
+
+func getTitle(HTMLString string) (title string) {
+
+    r := strings.NewReader(HTMLString)
+    z := html.NewTokenizer(r)
+
+    var i int
     for {
-        tt := tokenizer.Next()
-        switch {
-        case tt == html.StartTagToken:
-            // fmt.Println(tt)
-            token := tokenizer.Token()
-            switch token.Data {
-            case "a":
+        tt := z.Next()
 
-                for _, attr := range token.Attr {
-
-                    if attr.Key == "href" {
-                        link := attr.Val
-
-                        parsedLink, parseLinkErr := url.Parse(link)
-
-                        // debug
-                        // if strings.Index(link, "#") == 0 {
-                        //  fmt.Println(link)
-                        // } else {
-                        //  fmt.Println(parsedLink)
-                        // }
-                        if parseLinkErr == nil {
-                            if isInternal(parsedLink, siteURL, link) {
-                                scrapeData.Internal++
-                            } else {
-                                scrapeData.External++
-                            }
-                        }
-
-                        if parseLinkErr != nil {
-                            fmt.Println("Can't parse: " + token.Data)
-                        }
-                    }
-                }
-                break
-            }
-        case tt == html.ErrorToken:
-            end = true
-            break
+        i++
+        if i > 100 { // Title should be one of the first tags
+            return
         }
-        if end {
-            break
+
+        switch {
+        case tt == html.ErrorToken:
+            fmt.Println("Error")
+            // End of the document, we're done
+            return
+        case tt == html.SelfClosingTagToken:
+            t := z.Token()
+
+            // Check if the token is an <title> tag
+            if t.Data != "input" {
+                continue
+            }
+
+            // fmt.Printf("%+v\n%v\n%v\n%v\n", t, t, t.Type.String(), t.Attr)
+            tt := z.Next()
+
+            if tt == html.TextToken {
+                t := z.Token()
+                title = t.Data
+                return
+                // fmt.Printf("%+v\n%v\n", t, t.Data)
+            }
         }
     }
-
-    fmt.Println(scrapeData.Internal)
-    fmt.Println(scrapeData.External)
-    //fmt.Println(scrapeData)
-    
-    //data, _ := json.Marshal(&scrapeData)
-    //fmt.Println(string(data))
 }
