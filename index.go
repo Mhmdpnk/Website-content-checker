@@ -2,10 +2,12 @@ package main
 
 import (
 		"fmt"
+		"log"
 		"net/http"
 		"html/template"
 		"io/ioutil"
 		"strings"
+		"net/url"
 		"golang.org/x/net/html"
 		)
 
@@ -13,6 +15,15 @@ var tpl *template.Template
 
 func init(){
 	tpl = template.Must(template.ParseGlob("templates/*.html"))
+}
+
+type scrapeDataStore struct {
+	Internal int `json:"internal"`
+	External int `json:"external"`
+}
+
+func isInternal(parsedLink *url.URL, siteURL *url.URL, link string) bool {
+	return parsedLink.Host == siteURL.Host || strings.Index(link, "#") == 0 || len(parsedLink.Host) == 0
 }
 
 func main(){
@@ -46,16 +57,24 @@ func processor(w http.ResponseWriter, r *http.Request){
 	var html_version, pageTitle = getUrlContent(requested_url)
 	
 
+	//---- Get External & Internal links
+	var internalLink, externalLink = linksCounter(requested_url)
+	//fmt.Println("Links: ", linkCount)
+
 	data := struct{
 		Email string
 		Url string
 		HtmlVersion float64
 		Title string
+		Internal int
+		External int
 	}{
 		Email: email,
 		Url: requested_url,
 		HtmlVersion: html_version,
 		Title: pageTitle,
+		Internal: internalLink,
+		External: externalLink,
 	}
 	
 	
@@ -100,6 +119,10 @@ func getUrlContent(url string) (float64, string){
 
 	//---- Get HTML title --------
 	var title string = getHtmlTitle(html_str)
+
+
+	//---- Get HTML headings --------
+
 
 
     //----------------------------
@@ -175,4 +198,63 @@ func getHtmlTitle(HTMLString string) (title string) {
     }
 }
 
+func linksCounter(urlIn  string) (int, int){
 
+	siteURL, parseErr := url.Parse(urlIn)
+
+	if parseErr != nil {
+		log.Fatalln(parseErr)
+	}
+
+	resp, err := http.Get(urlIn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	scrapeData := &scrapeDataStore{}
+
+	tokenizer := html.NewTokenizer(resp.Body)
+	end := false
+	for {
+		tt := tokenizer.Next()
+		switch {
+		case tt == html.StartTagToken:
+			// fmt.Println(tt)
+			token := tokenizer.Token()
+			switch token.Data {
+			case "a":
+
+				for _, attr := range token.Attr {
+
+					if attr.Key == "href" {
+						link := attr.Val
+
+						parsedLink, parseLinkErr := url.Parse(link)
+
+						if parseLinkErr == nil {
+							if isInternal(parsedLink, siteURL, link) {
+								scrapeData.Internal++
+							} else {
+								scrapeData.External++
+							}
+						}
+
+						if parseLinkErr != nil {
+							fmt.Println("Can't parse: " + token.Data)
+						}
+					}
+				}
+				break
+			}
+		case tt == html.ErrorToken:
+			end = true
+			break
+		}
+		if end {
+			break
+		}
+	}
+
+
+	return scrapeData.Internal, scrapeData.External
+}

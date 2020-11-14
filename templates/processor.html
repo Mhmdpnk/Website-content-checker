@@ -22,39 +22,39 @@
 					<div class="requeste_url">
 						<p class="desc">Here is the results for the requested URL:<br> {{.Url}}</p>
 					</div>
-					<!-- <p>Your email address: {{.Email}}</p> -->
 
 					<div class="col-6 mx-auto mt-2">
 						<table class="table table-bordered">
 						<thead>
 					    	<tr>
-						      <th scope="col">Content</th>
-						      <th scope="col">Information</th>
+						      <th class="bg-secondary text-white">Content</th>
+						      <th class="bg-secondary text-white">Information</th>
 					    	</tr>
 					  	</thead>
 						<tbody>
 					    	<tr>
-					      		<th scope="row">HTML Version</th>
+					      		<td class="text-left">HTML Version</td>
 					      		<td>{{.HtmlVersion}}</td>
 					    	</tr>
 					    	<tr>
-					    		<th scope="row">Page Title</th>
+					    		<td class="text-left">Page Title</td>
 					      		<td>{{.Title}}</td>
 					    	</tr>
 					    	<tr>
-					      		<th scope="row">Headings count by level</th>
+					      		<td class="text-left">Headings count by level</td>
 					      		<td>N/A</td>
 					    	</tr>
 					    	<tr>
-					      		<th scope="row">Amount of internal and external links</th>
+					      		<td class="text-left">Amount of internal and external links</td>
+					      		<td>Internal Links: {{.Internal}} <br>External Links: {{.External}}</td>
+					    	</tr>
+
+					    	<tr>
+					      		<td class="text-left">Amount of inaccessible links</td>
 					      		<td>N/A</td>
 					    	</tr>
 					    	<tr>
-					      		<th scope="row">Amount of inaccessible links</th>
-					      		<td>N/A</td>
-					    	</tr>
-					    	<tr>
-					      		<th scope="row">If a page contains a login form</th>
+					      		<td class="text-left">If a page contains a login form</td>
 					      		<td>N/A</td>
 					    	</tr>
 
@@ -67,7 +67,7 @@
 					    	</tr>
 					  	</tbody>
 					</table>	
-					</div>	
+					</div>		
 					
 					
 				</div>
