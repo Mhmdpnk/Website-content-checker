@@ -16,10 +16,11 @@ var tpl *template.Template
 type ReturnFuncData struct{ 
 	HtmlVersion float64 
 	pageTitle string
-	h1Count int 
+	hasLogin string
 }
 
 var headingTags[7] int
+var itHasLogin string
 
 func init(){
 	tpl = template.Must(template.ParseGlob("templates/*.html"))
@@ -67,9 +68,6 @@ func processor(w http.ResponseWriter, r *http.Request){
 
 
 	//---- Get HTML Heding tags
-	fmt.Printf("%v", headingTags)
-	fmt.Println("")
-
 	headValues := make([]int, 7)
 
 	// Copy headingTags array values to headvalues type
@@ -78,30 +76,29 @@ func processor(w http.ResponseWriter, r *http.Request){
 	}
 
 	// Printing out the result
-	for index,element := range headValues{
+	//fmt.Printf("%v", headingTags)
+	/*for index,element := range headValues{
         fmt.Println(index,"=>",element)
-    }
-
+    }*/
 
 
 	data := struct{
 		Url string
 		HtmlVersion float64
 		Title string
-		Heading1 int
 		Internal int
 		External int
 		HeadValues []int
+		HasLogin string
 	}{
 		Url: requested_url,
 		HtmlVersion: funcData.HtmlVersion,
 		Title: funcData.pageTitle,
-		Heading1: funcData.h1Count,
 		Internal: internalLink,
 		External: externalLink,
 		HeadValues: headValues,
+		HasLogin: funcData.hasLogin,
 	}
-	
 	
 	tpl.ExecuteTemplate(w, "processor.html", data)
 }
@@ -123,10 +120,10 @@ func getUrlContent(url string) ReturnFuncData{
 
 	// reads html as a slice of bytes
 	html, err := ioutil.ReadAll(resp.Body)
-
+	
 
 	// Copy data from the response to standard output
-	/*html, err := io.Copy(os.Stdout, resp.Body) //use package "io" and "os"*/
+	//html, err := io.Copy(os.Stdout, resp.Body) //use package "io" and "os"*/
 
 	if err != nil {
 		panic(err)
@@ -143,8 +140,6 @@ func getUrlContent(url string) ReturnFuncData{
 
 
 	//---- Count the HTML tag --------
-	var h1Count int = htmlTagCounter(html_str, "h1")
-	
 	
 	for i := 0; i <= 6; i++{
 		concatenatedTag := fmt.Sprintf("h%d", i)
@@ -157,17 +152,38 @@ func getUrlContent(url string) ReturnFuncData{
 	}
 
 
-
-
-
-
-	//---- Get Login Form --------
-	//getLoginForm(html_str)
-
-    //----------------------------
-
 	
-	return ReturnFuncData{html_version, pageTitle, h1Count}
+	//---- Get Login Form --------
+	if htmlTagFinder(html_str, "form"){
+		fmt.Println("Form")
+		if htmlTagFinder(html_str, "input"){
+			fmt.Println("Input")
+			if strings.Contains(html_str, "type=\"password\""){
+				fmt.Println("password")
+				if strings.Contains(html_str, "type=\"submit\""){
+					fmt.Println("submit")
+					if strings.Contains(html_str, "method=\"POST\"") || strings.Contains(html_str, "method=\"post\""){
+						fmt.Println("POST")
+						itHasLogin = "YES"
+					} else if strings.Contains(html_str, "method=\"GET\"") || strings.Contains(html_str, "method=\"get\""){
+						fmt.Println("GET")
+						itHasLogin = "YES"
+					} else { itHasLogin = "NO"}	
+				} else { itHasLogin = "NO"}
+			} else { itHasLogin = "NO"}
+		} else { itHasLogin = "NO"}
+	} else { itHasLogin = "NO"}
+						    
+
+
+	if itHasLogin == "YES" {
+		if getLoginForm(html_str){
+			itHasLogin = "YES"
+			fmt.Println("Passed")
+		}
+	} else { itHasLogin = "NO"}
+
+	return ReturnFuncData{html_version, pageTitle, itHasLogin}
 
 
 }//getUrlContent
@@ -286,22 +302,6 @@ func linksCounter(urlIn  string) (int, int){
 	return scrapeData.Internal, scrapeData.External
 }
 
-func getLoginForm(html string){
-
-	//var html_version float64 = 0
-    
-    if(strings.Contains(html, "login") || strings.Contains(html, "Login")){
- 
-    	fmt.Println("It has login text.")
-
-    	if(strings.Contains(html, "form")){
-			fmt.Println("It has form!")
-		}
-
-    }
-	return
-}
-
 func htmlTagCounter(HTMLString string, HTMLTag string) int{
 
     read := strings.NewReader(HTMLString)
@@ -326,4 +326,55 @@ func htmlTagCounter(HTMLString string, HTMLTag string) int{
         }
     }
     return counter
+}
+
+func getLoginForm(html string) bool{
+
+	var hasLogin bool
+
+	if strings.Contains(html, "login"){
+		hasLogin = true
+	} else if strings.Contains(html, "Log in"){
+		hasLogin = true
+	}else{
+		hasLogin = false
+	}
+
+
+	if strings.Contains(html, "sign in"){
+		hasLogin = true
+	} else if strings.Contains(html, "sign-in"){
+		hasLogin = true
+	}else{
+		hasLogin = false
+	}
+
+
+	return hasLogin
+}
+
+func htmlTagFinder(HTMLString string, HTMLTag string) bool{
+
+    read := strings.NewReader(HTMLString)
+    tokenizer := html.NewTokenizer(read)
+    var itHas bool
+
+    for {
+        tokenType := tokenizer.Next() // get the next token type
+
+        if tokenType == html.ErrorToken{ // handling erro
+            break // break
+        }
+
+        if tokenType == html.StartTagToken{ // if it is a startTagToken
+            token := tokenizer.Token() // Then get the token
+
+            if token.Data == HTMLTag{ // if it matches with the name of HTML tag
+                
+                tokenType = tokenizer.Next() // get the HTML tag
+                itHas = true
+            } 
+        }
+    }
+    return itHas
 }

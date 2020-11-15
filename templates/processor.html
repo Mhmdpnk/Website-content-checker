@@ -42,7 +42,11 @@
 					    	</tr>
 					    	<tr>
 					      		<td class="text-left">Headings count by level</td>
-					      		<td>Heading 1: {{ .Heading1}}</td>
+					      		<td>
+					      			{{ range $key, $value := .HeadValues }}
+					      				Heading {{$key}}: {{ $value }}<br>
+					      			{{ end }}
+					      		</td>
 					    	</tr>
 
 					    	<tr>
@@ -50,13 +54,16 @@
 					      		<td>Internal Links: {{.Internal}} <br>External Links: {{.External}}</td>
 					    	</tr>
 
-					    	<tr>{{.Range}}
+					    	
+					    	<tr>
 					      		<td class="text-left">Amount of inaccessible links</td>
-					      		<td>HeadValues: {{.HeadValues}}</td>
+					      		<td>N/A</td>
 					    	</tr>
+					    	
+
 					    	<tr>
 					      		<td class="text-left">If a page contains a login form</td>
-					      		<td>N/A</td>
+					      		<td>{{.HasLogin}}</td>
 					    	</tr>
 
 					    	<tr>
