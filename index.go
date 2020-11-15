@@ -9,6 +9,7 @@ import (
 		"strings"
 		"net/url"
 		"golang.org/x/net/html"
+    	"github.com/PuerkitoBio/goquery"
 		)
 
 var tpl *template.Template
@@ -59,6 +60,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 	}	
 
 	requested_url := r.FormValue("web_url")
+	fmt.Println("Link: ", requested_url)
 
 	// Get the content of the URL and the return values
 	funcData := getUrlContent(requested_url)
@@ -74,12 +76,19 @@ func processor(w http.ResponseWriter, r *http.Request){
 	for i := 0; i <= len(headingTags); i++{
 	    copy(headValues, headingTags[:i])
 	}
-
 	// Printing out the result
 	//fmt.Printf("%v", headingTags)
 	/*for index,element := range headValues{
         fmt.Println(index,"=>",element)
     }*/
+
+
+
+	//---- Inaccessible Links --------
+	findAllLinks(requested_url)
+
+
+	
 
 
 	data := struct{
@@ -181,10 +190,6 @@ func getUrlContent(url string) ReturnFuncData{
 		}
 	} else { itHasLogin = "NO"}
 
-
-
-	//---- Inaccessible Links --------
-	
 
 	//-----------------------------
 
@@ -386,4 +391,20 @@ func htmlTagFinder(HTMLString string, HTMLTag string) bool{
         }
     }
     return itHas
+}
+
+func findAllLinks(requestedUrl  string){
+
+	doc, err := goquery.NewDocument("https://en.wikipedia.org/wiki/Example.com")
+    
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    doc.Find("a[href]").Each(func(index int, item *goquery.Selection) {
+        href, _ := item.Attr("href")
+        fmt.Printf("link: %s - anchor text: %s\n", href, item.Text())
+        
+    })
+    
 }
