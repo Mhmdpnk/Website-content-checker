@@ -173,8 +173,6 @@ func getUrlContent(url string) ReturnFuncData{
 			} else { itHasLogin = "NO"}
 		} else { itHasLogin = "NO"}
 	} else { itHasLogin = "NO"}
-						    
-
 
 	if itHasLogin == "YES" {
 		if getLoginForm(html_str){
@@ -182,6 +180,13 @@ func getUrlContent(url string) ReturnFuncData{
 			fmt.Println("Passed")
 		}
 	} else { itHasLogin = "NO"}
+
+
+
+	//---- Inaccessible Links --------
+	
+
+	//-----------------------------
 
 	return ReturnFuncData{html_version, pageTitle, itHasLogin}
 
@@ -241,6 +246,7 @@ func getHtmlTagContent(HTMLString string, HtmlTag string) (title string){
     }
 }
 
+// Count the number of internal and external links
 func linksCounter(urlIn  string) (int, int){
 
 	siteURL, parseErr := url.Parse(urlIn)
@@ -302,6 +308,7 @@ func linksCounter(urlIn  string) (int, int){
 	return scrapeData.Internal, scrapeData.External
 }
 
+// Count the occurance of the HTML tag
 func htmlTagCounter(HTMLString string, HTMLTag string) int{
 
     read := strings.NewReader(HTMLString)
@@ -328,6 +335,7 @@ func htmlTagCounter(HTMLString string, HTMLTag string) int{
     return counter
 }
 
+// Compare the strings to find the login form
 func getLoginForm(html string) bool{
 
 	var hasLogin bool
@@ -353,6 +361,7 @@ func getLoginForm(html string) bool{
 	return hasLogin
 }
 
+// Find the HTML tag and return true or false
 func htmlTagFinder(HTMLString string, HTMLTag string) bool{
 
     read := strings.NewReader(HTMLString)
