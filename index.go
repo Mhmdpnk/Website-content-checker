@@ -13,6 +13,14 @@ import (
 
 var tpl *template.Template
 
+type ReturnFuncData struct{ 
+	HtmlVersion float64 
+	pageTitle string
+	h1Count int 
+}
+
+var headingTags[7] int
+
 func init(){
 	tpl = template.Must(template.ParseGlob("templates/*.html"))
 }
@@ -52,25 +60,46 @@ func processor(w http.ResponseWriter, r *http.Request){
 	requested_url := r.FormValue("web_url")
 
 	// Get the content of the URL and the return values
-	var html_version, pageTitle = getUrlContent(requested_url)
-	
+	funcData := getUrlContent(requested_url)
 
 	//---- Get External & Internal links
 	var internalLink, externalLink = linksCounter(requested_url)
-	
+
+
+	//---- Get HTML Heding tags
+	fmt.Printf("%v", headingTags)
+	fmt.Println("")
+
+	headValues := make([]int, 7)
+
+	// Copy headingTags array values to headvalues type
+	for i := 0; i <= len(headingTags); i++{
+	    copy(headValues, headingTags[:i])
+	}
+
+	// Printing out the result
+	for index,element := range headValues{
+        fmt.Println(index,"=>",element)
+    }
+
+
 
 	data := struct{
 		Url string
 		HtmlVersion float64
 		Title string
+		Heading1 int
 		Internal int
 		External int
+		HeadValues []int
 	}{
 		Url: requested_url,
-		HtmlVersion: html_version,
-		Title: pageTitle,
+		HtmlVersion: funcData.HtmlVersion,
+		Title: funcData.pageTitle,
+		Heading1: funcData.h1Count,
 		Internal: internalLink,
 		External: externalLink,
+		HeadValues: headValues,
 	}
 	
 	
@@ -78,7 +107,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 }
 
 
-func getUrlContent(url string) (float64, string){
+func getUrlContent(url string) ReturnFuncData{
 	
 	// Printing the HTML of URL
 	fmt.Printf("HTML code of %s ...\n", url)
@@ -103,10 +132,6 @@ func getUrlContent(url string) (float64, string){
 		panic(err)
 	}
 
-	// show the HTML code as a string %s
-	//fmt.Printf("%s\n", html)
-	
-
 	//---- Get HTML Version --------
 
 	html_str := string(html) // Convert []byte into a string
@@ -114,16 +139,35 @@ func getUrlContent(url string) (float64, string){
 	
 
 	//---- Get HTML title --------
-	var title string = getHtmlTagContent(html_str, "title")
+	var pageTitle string = getHtmlTagContent(html_str, "title")
+
+
+	//---- Count the HTML tag --------
+	var h1Count int = htmlTagCounter(html_str, "h1")
+	
+	
+	for i := 0; i <= 6; i++{
+		concatenatedTag := fmt.Sprintf("h%d", i)
+
+    	if i == 0 { 
+    		continue
+    	}
+
+		headingTags[i] = htmlTagCounter(html_str, concatenatedTag)
+	}
+
+
+
+
 
 
 	//---- Get Login Form --------
 	//getLoginForm(html_str)
 
-
     //----------------------------
+
 	
-	return html_version, title
+	return ReturnFuncData{html_version, pageTitle, h1Count}
 
 
 }//getUrlContent
@@ -154,36 +198,28 @@ func getHtmlVersion(html string) float64{
 
 // To get the HTML tag text content - Inside HTML tag
 func getHtmlTagContent(HTMLString string, HtmlTag string) (title string){
+  
+    read := strings.NewReader(HTMLString)
+    tokenizer := html.NewTokenizer(read)
 
-    r := strings.NewReader(HTMLString)
-    z := html.NewTokenizer(r)
-
-    var i int
     for {
-        tt := z.Next()
+        tokenType := tokenizer.Next() // get the next token type
 
-        i++
-        if i > 100 {
+        if tokenType == html.ErrorToken{ // handling erro
             return
         }
 
-        switch {
-        case tt == html.ErrorToken:
-            return
-        case tt == html.StartTagToken:
-            t := z.Token()
+        if tokenType == html.StartTagToken{ // if it is a startTagToken
+            token := tokenizer.Token() // Then get the token
 
-            // Check the the HTML tag
-            if t.Data != HtmlTag {
-                continue
-            }
+            if token.Data == HtmlTag{ // if it matches with the name of HTML tag
+                tokenType = tokenizer.Next() // get the HTML tag
 
-            tt := z.Next()
-
-            if tt == html.TextToken {
-                t := z.Token()
-                title = t.Data
-                return
+                if tokenType == html.TextToken{ //just make sure it's actually a text token
+                    token := tokenizer.Token() // get the token
+                    title = token.Data // return the data
+                    return
+                }   
             }
         }
     }
@@ -264,4 +300,30 @@ func getLoginForm(html string){
 
     }
 	return
+}
+
+func htmlTagCounter(HTMLString string, HTMLTag string) int{
+
+    read := strings.NewReader(HTMLString)
+    tokenizer := html.NewTokenizer(read)
+    var counter int = 0
+
+    for {
+        tokenType := tokenizer.Next() // get the next token type
+
+        if tokenType == html.ErrorToken{ // handling erro
+            break // break
+        }
+
+        if tokenType == html.StartTagToken{ // if it is a startTagToken
+            token := tokenizer.Token() // Then get the token
+
+            if token.Data == HTMLTag{ // if it matches with the name of HTML tag
+                
+                tokenType = tokenizer.Next() // get the HTML tag
+                counter++ 	// increment the counter
+            } 
+        }
+    }
+    return counter
 }

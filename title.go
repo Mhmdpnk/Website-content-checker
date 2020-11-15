@@ -7,6 +7,11 @@ import (
     "golang.org/x/net/html"
 )
 
+type headingTags struct {
+    Name string
+    Value int
+}
+
 func main() {
 
     HTMLString := `<!DOCTYPE html>
@@ -21,49 +26,69 @@ func main() {
     <meta name="twitter:card" content="summary">
     <meta name="twitter:domain" content="stackoverflow.com"/>
     <meta property="og:type" content="website" />
-    <body><input type="password" /><img src="#" /></body>`
+    <body><h1>H11</h1><h1>H12</h1><h1>H12</h1><h1>H12</h1><h1>H12</h1><img src="#" /></body>`
 
     title := getTitle(HTMLString)
-
     fmt.Println(title)
+
+
+    /*tags := headingTags{}*/
+
+    var tags headingTags
+    fmt.Printf("%+v\n", tags) // Print with Variable Name
+
+    
+    for i := 0; i <= 6; i++{
+        if i == 0{
+            continue
+        }
+        
+        concatenatedTag := fmt.Sprintf("h%dName", i)
+        concatenatedValue := fmt.Sprintf("h%vValue", i)
+        fmt.Println(concatenatedTag)
+        fmt.Println(concatenatedValue)
+        
+        tags.Name = concatenatedTag
+        tags.Value = i
+
+
+    }
+
+    fmt.Printf("%+v\n", tags) // Print with Variable Name
+/*
+        emp := Employee{Id:1200, Name: "Mark Taylor"}
+    
+    fmt.Printf("%v\n",emp)  // Without Variable Name
+    fmt.Printf("%d\n",emp.Id)
+    fmt.Printf("%s\n",emp.Name)*/
+
+    //fmt.Println("AFTER: ", headingTags)
+
 }
 
-func getTitle(HTMLString string) (title string) {
+func getTitle(HTMLString string) int  {
 
-    r := strings.NewReader(HTMLString)
-    z := html.NewTokenizer(r)
+    read := strings.NewReader(HTMLString)
+    tokenizer := html.NewTokenizer(read)
+    var counter int = 0
 
-    var i int
     for {
-        tt := z.Next()
+        tokenType := tokenizer.Next() // get the next token type
 
-        i++
-        if i > 100 { // Title should be one of the first tags
-            return
+        if tokenType == html.ErrorToken{ // handling erro
+            break
         }
 
-        switch {
-        case tt == html.ErrorToken:
-            fmt.Println("Error")
-            // End of the document, we're done
-            return
-        case tt == html.SelfClosingTagToken:
-            t := z.Token()
+        if tokenType == html.StartTagToken{ // if it is a startTagToken
+            token := tokenizer.Token() // Then get the token
 
-            // Check if the token is an <title> tag
-            if t.Data != "input" {
-                continue
-            }
-
-            // fmt.Printf("%+v\n%v\n%v\n%v\n", t, t, t.Type.String(), t.Attr)
-            tt := z.Next()
-
-            if tt == html.TextToken {
-                t := z.Token()
-                title = t.Data
-                return
-                // fmt.Printf("%+v\n%v\n", t, t.Data)
-            }
+            if token.Data == "h1"{ // if it matches with the name of HTML tag
+                
+                tokenType = tokenizer.Next() // get the HTML tag
+                counter++ 
+            } 
         }
+
     }
+    return counter
 }
