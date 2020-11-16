@@ -1,4 +1,4 @@
-# Website Content Checker with Go
+# Website Content Checker only in Go
 
 
 The application takes a website URL as an input and provides general information about the contents of the requested page such as:
@@ -9,7 +9,7 @@ The application takes a website URL as an input and provides general information
 - Amount of inaccessible links
 - If a page contains a login form
 
-The application has programmed with [Go language][go] and it is usefule for Search Engine Optimization (SEO). 
+The application has programmed with [Go language](https://golang.org/) and it is useful for Search Engine Optimization (SEO). 
 
 ## Installation
 
@@ -25,7 +25,7 @@ The application has programmed with [Go language][go] and it is usefule for Sear
 5. Open Command Promt (cmd) and change directory to the location of the files.
 
 6. Run the the index.go application by typing the followin command:
-	go run index.go
+	- go run index.go
 	
 7. You are all setup.
 
@@ -35,6 +35,7 @@ Note: Please note the program might take some time to fully load the information
 
 ## Imported packages
 
+```
 import (
 		"fmt"
 		"log"
@@ -47,7 +48,7 @@ import (
 		"golang.org/x/net/html"
     	"github.com/PuerkitoBio/goquery"
 		)
-
+```
 
 
 ## Support
