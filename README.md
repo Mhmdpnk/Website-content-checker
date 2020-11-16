@@ -17,7 +17,7 @@ The application has programmed with [Go language](https://golang.org/) and it is
 2. Verify that you've installed Go. 
 	- Open Command Prompt (cmd) and in the Command Prompt window, type the following command:
 	
-		$ go version
+			$ go version
 	
 3. Download all files and folders. The project contains templates, css and images. So make sure you download them all.
 
