@@ -8,6 +8,7 @@ import (
 		"io/ioutil"
 		"strings"
 		"net/url"
+		"time"
 		"golang.org/x/net/html"
     	"github.com/PuerkitoBio/goquery"
 		)
@@ -43,7 +44,6 @@ func main(){
     http.HandleFunc("/process", processor)
     http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
     http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
-    
     http.ListenAndServe(":8000", nil)
 }
 
@@ -54,6 +54,7 @@ func serveFiles(w http.ResponseWriter, r *http.Request){
 }
 
 func processor(w http.ResponseWriter, r *http.Request){
+	
 	if r.Method != "POST"{
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -80,7 +81,6 @@ func processor(w http.ResponseWriter, r *http.Request){
 
 	//---- Inaccessible Links --------
 	var inacessLinks = findAllLinks(requested_url)
-	//fmt.Println("In access Links: ", inacessLinks)
 
 
 	//---- Store values to struct --------
@@ -190,19 +190,19 @@ func getUrlContent(url string) ReturnFuncData{
 }
 
 // To get the HTML version
-func getHtmlVersion(html string) float64{
-	
+func getHtmlVersion(HTMLString string) float64{
+
 	var html_version float64 = 0
 
-	if strings.Contains(html, "XHTML 1.0"){
+	if strings.Contains(HTMLString, "XHTML 1.0"){
 		html_version = 1.0
-	} else if strings.Contains(html, "XHTML 1.1"){
+	} else if strings.Contains(HTMLString, "XHTML 1.1"){
 		html_version = 1.1
-	} else if strings.Contains(html, "HTML 2.0"){
+	} else if strings.Contains(HTMLString, "HTML 2.0"){
 		html_version = 2.0
-	} else if strings.Contains(html, "HTML 3.2"){
+	} else if strings.Contains(HTMLString, "HTML 3.2"){
 		html_version = 3.2
-	} else if strings.Contains(html, "XHTML 4.01"){
+	} else if strings.Contains(HTMLString, "XHTML 4.01"){
 		html_version = 4.01
 	} else {
 		html_version = 5
@@ -396,14 +396,19 @@ func findAllLinks(requestedUrl  string) int{
         
         href, _ := item.Attr("href")
 
-        resp, err := http.Get(href)
+        timeout := time.Duration(1 * time.Second)
+			client := http.Client{
+		    Timeout: timeout,
+		}
+
+        resp, err := client.Get(href)
 		if err != nil {
 		    fmt.Println("Failed: ", err.Error())
 		    counter++
 		} else {
 		    fmt.Println("Success: ", string(resp.StatusCode) + resp.Status)
 		}
-    }) //doc.Find
+    }) 
 
     return counter
-} //findAllLinks
+}
