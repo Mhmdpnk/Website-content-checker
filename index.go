@@ -70,6 +70,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 
 	//---- Get HTML Heding tags
 	headValues := make([]int, 7)
+	fmt.Println("Providing information for ", requested_url)
 
 	// Copy headingTags array values to headvalues type
 	for i := 0; i <= len(headingTags); i++{
@@ -79,7 +80,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 
 	//---- Inaccessible Links --------
 	var inacessLinks = findAllLinks(requested_url)
-	fmt.Println("In access Links: ", inacessLinks)
+	//fmt.Println("In access Links: ", inacessLinks)
 
 
 	//---- Store values to struct --------
@@ -382,25 +383,27 @@ func htmlTagFinder(HTMLString string, HTMLTag string) bool{
 }
 
 // Find all related href/links
-func findAllLinks(requestedUrl  string){
+func findAllLinks(requestedUrl  string) int{
 
+    var counter int = 0
 	doc, err := goquery.NewDocument(requestedUrl)
     
     if err != nil {
         log.Fatal(err)
     }
     
-    doc.Find("a[href]").Each(func(index int, item *goquery.Selection) int {
+    doc.Find("a[href]").Each(func(index int, item *goquery.Selection) {
         
-        var counter int = 0
         href, _ := item.Attr("href")
 
-        if strings.Contains(href, "#"){
-        	counter++
-        }
-        //fmt.Printf("link: %s - anchor text: %s\n", href, item.Text())
-        fmt.Println("HREF: ", href)
-    })
+        resp, err := http.Get(href)
+		if err != nil {
+		    fmt.Println("Failed: ", err.Error())
+		    counter++
+		} else {
+		    fmt.Println("Success: ", string(resp.StatusCode) + resp.Status)
+		}
+    }) //doc.Find
 
     return counter
-}
+} //findAllLinks
