@@ -1,4 +1,4 @@
-# Website Content Checker only in Go
+# Website Content Checker in Go Language
 
 
 The application takes a website URL as an input and provides general information about the contents of the requested page such as:
