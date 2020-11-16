@@ -43,7 +43,7 @@ The application has programmed with [Go language](https://golang.org/) and it is
 
 
 ## Application Demo
-You may watch the video ([Extract and Check Website Content using Go Language])(https://youtu.be/SW8wa0xdywE) for demo 
+You may watch the video [Extract and Check Website Content using Go Language](https://youtu.be/SW8wa0xdywE) for demo 
 
 
 ## Imported packages
