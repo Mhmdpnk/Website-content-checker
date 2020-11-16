@@ -1,23 +1,36 @@
-package main
-
-import (
-    "fmt"        
-    "log"
-    "github.com/PuerkitoBio/goquery"
-)
+type Result struct{ Type string }
 
 func main() {
-
-    doc, err := goquery.NewDocument("https://en.wikipedia.org/wiki/Example.com")
-    
-    if err != nil {
-        log.Fatal(err)
+    types := map[string]string{
+        "FindAllString":      "FindAllString",
+        "FindString":         "FindString",
+        "FindStringSubmatch": "FindStringSubmatch",
     }
-    
-    doc.Find("a[href]").Each(func(index int, item *goquery.Selection) {
-        href, _ := item.Attr("href")
-        fmt.Printf("link: %s - anchor text: %s\n", href, item.Text())
-        
-    })
-    
+    res := &Result{Type: "FindAllString"}
+
+    templateString := `
+    <select name="type">
+        {{ range $key,$value := .Types }}
+            {{ if eq $key $.Res.Type }}
+                <option value="{{$key}}" selected>{{$value}}</option>
+            {{ else }}
+                <option value="{{$key}}">{{$value}}</option>
+            {{ end }}
+        {{ end }}
+    </select>`
+    t, err := template.New("index").Parse(templateString)
+    if err != nil {
+        panic(err)
+    }
+    var b bytes.Buffer
+    writer := bufio.NewWriter(&b)
+    err = t.Execute(writer, struct {
+        Types map[string]string
+        Res   *Result
+    }{types, res})
+    if err != nil {
+        panic(err)
+    }
+    writer.Flush()
+    log.Println(b.String())
 }

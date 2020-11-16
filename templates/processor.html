@@ -44,7 +44,11 @@
 					      		<td class="text-left">Headings count by level</td>
 					      		<td>
 					      			{{ range $key, $value := .HeadValues }}
-					      				Heading {{$key}}: {{ $value }}<br>
+					      				{{ if eq $key 0 }}
+					      					<!-- Do nothing -->
+					      			 	{{ else }}
+					      					Heading {{$key}}: {{ $value }}<br>
+					      				{{ end }}
 					      			{{ end }}
 					      		</td>
 					    	</tr>

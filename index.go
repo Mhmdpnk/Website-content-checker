@@ -9,7 +9,7 @@ import (
 		"strings"
 		"net/url"
 		"golang.org/x/net/html"
-    	"github.com/PuerkitoBio/goquery"
+    	/*"github.com/PuerkitoBio/goquery"*/
 		)
 
 var tpl *template.Template
@@ -85,10 +85,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 
 
 	//---- Inaccessible Links --------
-	findAllLinks(requested_url)
-
-
-	
+	//findAllLinks(requested_url)
 
 
 	data := struct{
@@ -108,7 +105,10 @@ func processor(w http.ResponseWriter, r *http.Request){
 		HeadValues: headValues,
 		HasLogin: funcData.hasLogin,
 	}
-	
+
+
+
+
 	tpl.ExecuteTemplate(w, "processor.html", data)
 }
 
@@ -393,7 +393,7 @@ func htmlTagFinder(HTMLString string, HTMLTag string) bool{
     return itHas
 }
 
-func findAllLinks(requestedUrl  string){
+/*func findAllLinks(requestedUrl  string){
 
 	doc, err := goquery.NewDocument("https://en.wikipedia.org/wiki/Example.com")
     
@@ -407,4 +407,4 @@ func findAllLinks(requestedUrl  string){
         
     })
     
-}
+}*/
