@@ -13,7 +13,7 @@ The application has programmed with [Go language](https://golang.org/) and it is
 
 ## Installation
 
-1. Please download and install Go
+1. Please [download and install Go](https://golang.org/doc/install)
 2. Verify that you've installed Go. 
 	- Open Command Prompt (cmd) and in the Command Prompt window, type the following command:
 	
