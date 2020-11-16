@@ -1,4 +1,4 @@
-# Website Content Checker only in Go
+# Website Content Checker in Go Language
 
 
 The application takes a website URL as an input and provides general information about the contents of the requested page such as:
@@ -13,30 +13,33 @@ The application has programmed with [Go language](https://golang.org/) and it is
 
 ## Installation
 
-1. Please download and install Go
+1. Please [download and install Go](https://golang.org/doc/install)
 2. Verify that you've installed Go. 
 	- Open Command Prompt (cmd) and in the Command Prompt window, type the following command:
 	
-		$ go version
+			$ go version
+			
+**Please note the project requires goquery**. You may install it by typing following command in the command prompt.
+
+    $ go get github.com/PuerkitoBio/goquery	
 	
 3. Download all files and folders. The project contains templates, css and images. So make sure you download them all.
 
-4. Change directory to where you download/ extracted the files.
+4. Open Command Promt (cmd) and change directory to the location of the downloaded/ extracted files.
 
-5. Open Command Promt (cmd) and change directory to the location of the files.
-
-6. Run the the index.go application by typing the following command:
+5. Run the the index.go application by typing the following command and allow access to the application:
 	
 		$ go run index.go
 	
-7. You are all setup.
+6. Open your web browser and enter the following address (the applications runs on localhost port 8000):
 
-Please note the project requires **goquery**. You may install it by using
+		$ 127.0.0.1:8000
+		
+7. Enter the full address of the URL.
 
-    $ go get github.com/PuerkitoBio/goquery
+		$ https://www.example.com/ 
 
-
-**Please note** the program might take some time to fully load the information depends on the requested URL. The program fetches all links and check the accessability of the links. So it might take some time depends on the URL.
+**Please note** the program starts gathering infomation and contents. It might take some time to load the information depends on the requested URL. The program fetches all links and processes the accessability of the links.
 
 
 ## Imported packages
