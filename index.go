@@ -9,7 +9,7 @@ import (
 		"strings"
 		"net/url"
 		"golang.org/x/net/html"
-    	/*"github.com/PuerkitoBio/goquery"*/
+    	"github.com/PuerkitoBio/goquery"
 		)
 
 var tpl *template.Template
@@ -60,7 +60,6 @@ func processor(w http.ResponseWriter, r *http.Request){
 	}	
 
 	requested_url := r.FormValue("web_url")
-	fmt.Println("Link: ", requested_url)
 
 	// Get the content of the URL and the return values
 	funcData := getUrlContent(requested_url)
@@ -76,18 +75,13 @@ func processor(w http.ResponseWriter, r *http.Request){
 	for i := 0; i <= len(headingTags); i++{
 	    copy(headValues, headingTags[:i])
 	}
-	// Printing out the result
-	//fmt.Printf("%v", headingTags)
-	/*for index,element := range headValues{
-        fmt.Println(index,"=>",element)
-    }*/
-
 
 
 	//---- Inaccessible Links --------
-	//findAllLinks(requested_url)
+	findAllLinks(requested_url)
 
 
+	//---- Store values to struct --------
 	data := struct{
 		Url string
 		HtmlVersion float64
@@ -106,17 +100,15 @@ func processor(w http.ResponseWriter, r *http.Request){
 		HasLogin: funcData.hasLogin,
 	}
 
-
-
-
+	// Apply the template for generating HTML and pass data
 	tpl.ExecuteTemplate(w, "processor.html", data)
 }
 
-
+// Get the content of the requested URL
 func getUrlContent(url string) ReturnFuncData{
 	
 	// Printing the HTML of URL
-	fmt.Printf("HTML code of %s ...\n", url)
+	//fmt.Printf("HTML code of %s ...\n", url)
 	resp, err := http.Get(url)
 
 	// handle the error if there is one
@@ -129,10 +121,6 @@ func getUrlContent(url string) ReturnFuncData{
 
 	// reads html as a slice of bytes
 	html, err := ioutil.ReadAll(resp.Body)
-	
-
-	// Copy data from the response to standard output
-	//html, err := io.Copy(os.Stdout, resp.Body) //use package "io" and "os"*/
 
 	if err != nil {
 		panic(err)
@@ -151,12 +139,14 @@ func getUrlContent(url string) ReturnFuncData{
 	//---- Count the HTML tag --------
 	
 	for i := 0; i <= 6; i++{
+		// Concatenate the h and data
 		concatenatedTag := fmt.Sprintf("h%d", i)
 
     	if i == 0 { 
     		continue
     	}
 
+    	// Store and get the list of HTML Heading tags
 		headingTags[i] = htmlTagCounter(html_str, concatenatedTag)
 	}
 
@@ -164,18 +154,18 @@ func getUrlContent(url string) ReturnFuncData{
 	
 	//---- Get Login Form --------
 	if htmlTagFinder(html_str, "form"){
-		fmt.Println("Form")
+		/*fmt.Println("Form")*/
 		if htmlTagFinder(html_str, "input"){
-			fmt.Println("Input")
+			/*fmt.Println("Input")*/
 			if strings.Contains(html_str, "type=\"password\""){
-				fmt.Println("password")
+				/*fmt.Println("password")*/
 				if strings.Contains(html_str, "type=\"submit\""){
-					fmt.Println("submit")
+					/*fmt.Println("submit")*/
 					if strings.Contains(html_str, "method=\"POST\"") || strings.Contains(html_str, "method=\"post\""){
-						fmt.Println("POST")
+						/*fmt.Println("POST")*/
 						itHasLogin = "YES"
 					} else if strings.Contains(html_str, "method=\"GET\"") || strings.Contains(html_str, "method=\"get\""){
-						fmt.Println("GET")
+						/*fmt.Println("GET")*/
 						itHasLogin = "YES"
 					} else { itHasLogin = "NO"}	
 				} else { itHasLogin = "NO"}
@@ -186,19 +176,14 @@ func getUrlContent(url string) ReturnFuncData{
 	if itHasLogin == "YES" {
 		if getLoginForm(html_str){
 			itHasLogin = "YES"
-			fmt.Println("Passed")
 		}
 	} else { itHasLogin = "NO"}
 
 
 	//-----------------------------
-
+	// Return all the data to the struct
 	return ReturnFuncData{html_version, pageTitle, itHasLogin}
-
-
-}//getUrlContent
-
-
+}
 
 // To get the HTML version
 func getHtmlVersion(html string) float64{
@@ -393,9 +378,10 @@ func htmlTagFinder(HTMLString string, HTMLTag string) bool{
     return itHas
 }
 
-/*func findAllLinks(requestedUrl  string){
+// Find all related href/links
+func findAllLinks(requestedUrl  string){
 
-	doc, err := goquery.NewDocument("https://en.wikipedia.org/wiki/Example.com")
+	doc, err := goquery.NewDocument(requestedUrl)
     
     if err != nil {
         log.Fatal(err)
@@ -403,8 +389,12 @@ func htmlTagFinder(HTMLString string, HTMLTag string) bool{
     
     doc.Find("a[href]").Each(func(index int, item *goquery.Selection) {
         href, _ := item.Attr("href")
-        fmt.Printf("link: %s - anchor text: %s\n", href, item.Text())
-        
+
+        if strings.Contains(href, "#"){
+        	fmt.Println("it has #")
+        }
+        //fmt.Printf("link: %s - anchor text: %s\n", href, item.Text())
+        fmt.Println("HREF: ", href)
     })
     
-}*/
+}

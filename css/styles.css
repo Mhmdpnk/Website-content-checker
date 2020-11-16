@@ -62,3 +62,5 @@ b.light-color{ color: #444; }
 .title{margin:20px 0;padding: 10px 0;}
 .requeste_url{margin:20px 0;padding: 10px 0;}
 .btn-xl {padding: 5px 30px;font-size: 20px;border-radius: 10px;}
+.main-table tr td{border:1px solid #dee2e6;}
+.head-table tr td{border:none;}

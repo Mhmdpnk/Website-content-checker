@@ -23,8 +23,8 @@
 						<p class="desc">Here is the results for the requested URL:<br> {{.Url}}</p>
 					</div>
 
-					<div class="col-6 mx-auto mt-2">
-						<table class="table">
+					<div class="col-8 mx-auto mt-2">
+						<table class="table main-table">
 						<thead>
 					    	<tr>
 						      <th class="bg-secondary text-white">Content</th>
@@ -34,40 +34,42 @@
 						<tbody>
 					    	<tr>
 					      		<td class="text-left">HTML Version</td>
-					      		<td>{{.HtmlVersion}}</td>
+					      		<td class="text-left">{{.HtmlVersion}}</td>
 					    	</tr>
 					    	<tr>
 					    		<td class="text-left">Page Title</td>
-					      		<td>{{.Title}}</td>
+					      		<td class="text-left">{{.Title}}</td>
 					    	</tr>
 					    	<tr>
 					      		<td class="text-left">Headings count by level</td>
 					      		<td>
-					      			{{ range $key, $value := .HeadValues }}
-					      				{{ if eq $key 0 }}
+					      			<table class="head-table">
+					      				{{ range $key, $value := .HeadValues }}
+					      					{{ if eq $key 0 }}
 					      					<!-- Do nothing -->
-					      			 	{{ else }}
-					      					Heading {{$key}}: {{ $value }}<br>
-					      				{{ end }}
+					      			 		{{ else }}
+					      						<tr><td>Heading {{$key}}</td><td>{{ $value }}</td></tr>
+					      					{{ end }}
 					      			{{ end }}
-					      		</td>
+					      			</table>
+					      		</td>	
 					    	</tr>
 
 					    	<tr>
 					      		<td class="text-left">Amount of internal and external links</td>
-					      		<td>Internal Links: {{.Internal}} <br>External Links: {{.External}}</td>
+					      		<td class="text-left">Internal Links: {{.Internal}} <br>External Links: {{.External}}</td>
 					    	</tr>
 
 					    	
 					    	<tr>
 					      		<td class="text-left">Amount of inaccessible links</td>
-					      		<td>N/A</td>
+					      		<td class="text-left">N/A</td>
 					    	</tr>
 					    	
 
 					    	<tr>
 					      		<td class="text-left">If a page contains a login form</td>
-					      		<td>{{.HasLogin}}</td>
+					      		<td class="text-left">{{.HasLogin}}</td>
 					    	</tr>
 
 					    	<tr>
