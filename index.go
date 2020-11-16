@@ -78,7 +78,8 @@ func processor(w http.ResponseWriter, r *http.Request){
 
 
 	//---- Inaccessible Links --------
-	findAllLinks(requested_url)
+	var inacessLinks = findAllLinks(requested_url)
+	fmt.Println("In access Links: ", inacessLinks)
 
 
 	//---- Store values to struct --------
@@ -90,6 +91,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 		External int
 		HeadValues []int
 		HasLogin string
+		InaccessibleLinks int
 	}{
 		Url: requested_url,
 		HtmlVersion: funcData.HtmlVersion,
@@ -98,6 +100,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 		External: externalLink,
 		HeadValues: headValues,
 		HasLogin: funcData.hasLogin,
+		InaccessibleLinks: inacessLinks,
 	}
 
 	// Apply the template for generating HTML and pass data
@@ -387,14 +390,17 @@ func findAllLinks(requestedUrl  string){
         log.Fatal(err)
     }
     
-    doc.Find("a[href]").Each(func(index int, item *goquery.Selection) {
+    doc.Find("a[href]").Each(func(index int, item *goquery.Selection) int {
+        
+        var counter int = 0
         href, _ := item.Attr("href")
 
         if strings.Contains(href, "#"){
-        	fmt.Println("it has #")
+        	counter++
         }
         //fmt.Printf("link: %s - anchor text: %s\n", href, item.Text())
         fmt.Println("HREF: ", href)
     })
-    
+
+    return counter
 }
