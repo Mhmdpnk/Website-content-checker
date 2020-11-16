@@ -16,25 +16,27 @@ The application has programmed with [Go language](https://golang.org/) and it is
 1. Please download and install Go
 2. Verify that you've installed Go. 
 	- Open Command Prompt (cmd) and in the Command Prompt window, type the following command:
+	
 		$ go version
-		
+	
 3. Download all files and folders. The project contains templates, css and images. So make sure you download them all.
 
 4. Change directory to where you download/ extracted the files.
 
 5. Open Command Promt (cmd) and change directory to the location of the files.
 
-6. Run the the index.go application by typing the followin command:
-	$ go run index.go
+6. Run the the index.go application by typing the following command:
+	
+		$ go run index.go
 	
 7. You are all setup.
 
-Please note the project requires and goquery. You may install it by using
+Please note the project requires **goquery**. You may install it by using
 
     $ go get github.com/PuerkitoBio/goquery
 
 
-Note: Please note the program might take some time to fully load the information depends on the requested URL. The program fetches all links and check the accessability of the links. So it might take some time depends on the URL.
+**Please note** the program might take some time to fully load the information depends on the requested URL. The program fetches all links and check the accessability of the links. So it might take some time depends on the URL.
 
 
 ## Imported packages
@@ -60,7 +62,7 @@ import (
 There are a number of ways you can support the project:
 
 * Use it, star it, build something with it, spread the word!
-  - If you do build something open-source or otherwise publicly-visible, let me know so I can add it to the [Related Projects](#related-projects) section!
+  - If you do build something open-source or otherwise publicly-visible!
 * Raise issues to improve the project.
   - Please search existing issues before opening a new one - it may have already been adressed.
 * Pull requests: please discuss new code in an issue first, unless the fix is really trivial.
