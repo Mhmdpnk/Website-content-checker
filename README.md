@@ -42,6 +42,10 @@ The application has programmed with [Go language](https://golang.org/) and it is
 **Please note** the program starts gathering infomation and contents. It might take some time to load the information depends on the requested URL. The program fetches all links and processes the accessability of the links.
 
 
+## Application Demo
+You may watch the video [Extract and Check Website Content using Go Language](https://youtu.be/SW8wa0xdywE) for demo 
+
+
 ## Imported packages
 
 ```
@@ -65,8 +69,5 @@ import (
 There are a number of ways you can support the project:
 
 * Use it, star it, build something with it, spread the word!
-  - If you do build something open-source or otherwise publicly-visible!
 * Raise issues to improve the project.
-  - Please search existing issues before opening a new one - it may have already been adressed.
 * Pull requests: please discuss new code in an issue first, unless the fix is really trivial.
-  - Make sure new code is tested.
