@@ -8,7 +8,6 @@ import (
 		"io/ioutil"
 		"strings"
 		"net/url"
-		"time"
 		"golang.org/x/net/html"
     	"github.com/PuerkitoBio/goquery"
 		)
@@ -398,12 +397,12 @@ func findAllLinks(requestedUrl  string) int{
         
         href, _ := item.Attr("href")
 
-        timeout := time.Duration(1 * time.Second)
+        /*timeout := time.Duration(1 * time.Second)
 			client := http.Client{
 		    Timeout: timeout,
-		}
+		}*/
 
-        resp, err := client.Get(href)
+        resp, err := http.Get(href)
 		if err != nil {
 		    fmt.Println("Inaccessed  Link: ", err.Error())
 		    counter++
