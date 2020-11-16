@@ -39,7 +39,7 @@ func isInternal(parsedLink *url.URL, siteURL *url.URL, link string) bool {
 
 func main(){
 
-    fmt.Println("Now Listening on 8000")
+    fmt.Println("Now Listening on 127.0.0.1:8000")
     http.HandleFunc("/", serveFiles)
     http.HandleFunc("/process", processor)
     http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
@@ -71,7 +71,7 @@ func processor(w http.ResponseWriter, r *http.Request){
 
 	//---- Get HTML Heding tags
 	headValues := make([]int, 7)
-	fmt.Println("Providing information for ", requested_url)
+	fmt.Println("Fetching information for", requested_url)
 
 	// Copy headingTags array values to headvalues type
 	for i := 0; i <= len(headingTags); i++{
@@ -392,6 +392,8 @@ func findAllLinks(requestedUrl  string) int{
         log.Fatal(err)
     }
     
+	fmt.Println("List of the accessed or inacessed links...")
+    
     doc.Find("a[href]").Each(func(index int, item *goquery.Selection) {
         
         href, _ := item.Attr("href")
@@ -403,10 +405,10 @@ func findAllLinks(requestedUrl  string) int{
 
         resp, err := client.Get(href)
 		if err != nil {
-		    fmt.Println("Failed: ", err.Error())
+		    fmt.Println("Inaccessed  Link: ", err.Error())
 		    counter++
 		} else {
-		    fmt.Println("Success: ", string(resp.StatusCode) + resp.Status)
+		    fmt.Println("Accessed Link: ", resp.Status)
 		}
     }) 
 
