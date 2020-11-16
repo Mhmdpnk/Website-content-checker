@@ -25,13 +25,13 @@ The application has programmed with [Go language](https://golang.org/) and it is
 	
 3. Download all files and folders. The project contains templates, css and images. So make sure you download them all.
 
-4. Open Command Promt (cmd) and change directory to the location of the ownload/ extracted files.
+4. Open Command Promt (cmd) and change directory to the location of the downloaded/ extracted files.
 
 5. Run the the index.go application by typing the following command and allow access to the application:
 	
 		$ go run index.go
 	
-6. Open your web browser and enter the following address (the applications runs on localhost port 8000:
+6. Open your web browser and enter the following address (the applications runs on localhost port 8000):
 
 		$ 127.0.0.1:8000
 		
