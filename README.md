@@ -16,7 +16,7 @@ The application has programmed with [Go language](https://golang.org/) and it is
 1. Please download and install Go
 2. Verify that you've installed Go. 
 	- Open Command Prompt (cmd) and in the Command Prompt window, type the following command:
-		go version
+		$ go version
 		
 3. Download all files and folders. The project contains templates, css and images. So make sure you download them all.
 
@@ -25,9 +25,13 @@ The application has programmed with [Go language](https://golang.org/) and it is
 5. Open Command Promt (cmd) and change directory to the location of the files.
 
 6. Run the the index.go application by typing the followin command:
-	- go run index.go
+	$ go run index.go
 	
 7. You are all setup.
+
+Please note the project requires and goquery. You may install it by using
+
+    $ go get github.com/PuerkitoBio/goquery
 
 
 Note: Please note the program might take some time to fully load the information depends on the requested URL. The program fetches all links and check the accessability of the links. So it might take some time depends on the URL.
@@ -37,17 +41,17 @@ Note: Please note the program might take some time to fully load the information
 
 ```
 import (
-		"fmt"
-		"log"
-		"net/http"
-		"html/template"
-		"io/ioutil"
-		"strings"
-		"net/url"
-		"time"
-		"golang.org/x/net/html"
+	"fmt"
+	"log"
+	"net/http"
+	"html/template"
+	"io/ioutil"
+	"strings"
+	"net/url"
+	"time"
+	"golang.org/x/net/html"
     	"github.com/PuerkitoBio/goquery"
-		)
+	)
 ```
 
 
